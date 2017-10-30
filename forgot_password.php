@@ -42,32 +42,34 @@ if(isset($_POST['btn-email']))
         $stmt->execute(array(":umail" => $umail));
         $uRow = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        //hash the temp password to prep it for storage
-        $new_pass = password_hash($randomString, PASSWORD_DEFAULT);
+        if($stmt->rowCount()>0) {
+            //hash the temp password to prep it for storage
+            $new_pass = password_hash($randomString, PASSWORD_DEFAULT);
 
-        //store the password
-        $stmt = $DB_con->prepare("UPDATE users
+            //store the password
+            $stmt = $DB_con->prepare("UPDATE users
                                     SET user_pass = :upass
                                     WHERE user_email=:umail");
-        $stmt->bindparam(":upass", $new_pass);
-        $stmt->bindparam(":umail", $umail);
-        $stmt->execute();
+            $stmt->bindparam(":upass", $new_pass);
+            $stmt->bindparam(":umail", $umail);
+            $stmt->execute();
 
-        //send an email notifying the user of the change.
-        //  Obviously, it won't actually send, nor will it save a password
-        //  if the email is wrong, since it won't actually find something there.
-        $to = $umail;
-        $subject = 'AITPTest - Password Change Request';
-        $message = "Your temporary password is: \n"
-            . $randomString
-            . "\nPlease log in with this password to change your password\n"
-            . " as soon as possible.";
-        $headers = 'From: do-not-respond@phamspam.com' . "\r\n" .
-            'Reply-To: pleasedont@example.com' . "\r\n" .
-            'X-Mailer: PHP/' . phpversion();
+            //send an email notifying the user of the change.
+            //  Obviously, it won't actually send, nor will it save a password
+            //  if the email is wrong, since it won't actually find something there.
+            $to = $umail;
+            $subject = 'AITPTest - Password Change Request';
+            $message = "Your temporary password is: \n"
+                . $randomString
+                . "\nPlease log in with this password to change your password\n"
+                . " as soon as possible.";
+            $headers = 'From: do-not-respond@phamspam.com' . "\r\n" .
+                'Reply-To: pleasedont@example.com' . "\r\n" .
+                'X-Mailer: PHP/' . phpversion();
 
-        mail($to, $subject, $message, $headers);
-        $error="Email Sent to " . $umail; //I hate myself for abusing the $error message system, but it works. :(
+            mail($to, $subject, $message, $headers);
+            $error = "Email sent to " . $umail; //I hate myself for abusing the $error message system, but it works. :(
+        }else{$error = "An account with that email is not registered.";}
     } catch (PDOException $e) {
         echo $e->getMessage();
     }
