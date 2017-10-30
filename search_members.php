@@ -1,4 +1,5 @@
-<!--
+<?php
+/*<!--
 <--------------------------------------------\
 < Author: Tyler Stoney                       \
 < Date of Creation: October 25, 2017         \
@@ -8,9 +9,9 @@
 <          (Non-member, student, etc.)       \
 <          <FRONTEND/BACKEND>                \
 <--------------------------------------------\
--->
+-->*/
 
-<?php
+
 include_once 'dbconfig.php';
 $user_id = $_SESSION['user_session'];
 $stmt = $DB_con->prepare("SELECT * FROM users WHERE user_id=:user_id");
@@ -42,6 +43,8 @@ if(!$user->is_loggedin()||$userRow['officer']!=3)
         }
 
         td, th {
+            max-width:100%;
+            white-space:nowrap;
             border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;
@@ -117,9 +120,15 @@ if(isset($_POST['btn-email'])||isset($_POST['btn-change']))
             $stmt->bindParam(":my_id", $my_id);
             $stmt->execute();
         }
+        foreach ($_POST['deletion'] as $t_delete){
+            $stmt = $DB_con->prepare("DELETE FROM users WHERE user_id=:uid AND user_id<>:my_id");
+            $stmt->bindParam(":uid", $t_delete);
+            $stmt->bindParam(":my_id", $my_id);
+            $stmt->execute();
+        }
         echo "<p>User(s) changed successfully!</p>";
     }
-    echo "<form method='post'><table>";
+    echo "<form method='post'><table><tr><td>Name</td><td>Email Address</td><td>Account Level</td><td>Delete User?</td></tr>";
     $page = $DB_con->prepare("SELECT user_id, fName, lName, user_email, officer FROM users WHERE lName=:uname OR user_email=:uname");
     $page->bindParam(":uname", $_POST['cred']);
     $page->execute();
@@ -148,6 +157,9 @@ if(isset($_POST['btn-email'])||isset($_POST['btn-change']))
         echo       "<option value=" . ($value+3); if($officer==3)echo " selected disabled"; echo " id=" . $id . ">Officer</option>";
 
         echo        "</select> </td>
+                    <td><label for='deletion'>
+                    <input type='checkbox' name='deletion[]' value='$id'>
+                    </label></td>
               </tr>";
 
     }

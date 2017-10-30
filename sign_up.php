@@ -30,19 +30,19 @@ if(isset($_POST['btn-signup']))
         $error[] = "Email can't be left blank!";
     }
     else if(!filter_var($umail, FILTER_VALIDATE_EMAIL)) {
-        $error[] = 'Please enter a valid email address !';
+        $error[] = 'Please enter a valid email address!';
     }
     else if($upass=="") {
-        $error[] = "provide password !";
+        $error[] = "Password field can't be left blank!";
     }
     else if(strlen($upass) < 6){
-        $error[] = "Password must be at least 6 characters";
+        $error[] = "Password must be at least 6 characters.";
     }
     else if($upass!=$_POST['txt_upassDup']){
         $error[] = "Passwords don't match";
     }
     else if($fName=="") {
-        $error[] = "First name field can'd be left blank!";
+        $error[] = "First name field can't be left blank!";
     }
     else if($lName=="") {
         $error[] = "Last name field can't be left blank!";
@@ -77,8 +77,7 @@ if(isset($_POST['btn-signup']))
 }
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Sign up</title>
@@ -122,7 +121,7 @@ if($user->is_loggedin())
             {
                 ?>
                 <div class="alert alert-info">
-                    <i class="glyphicon glyphicon-log-in"></i> &nbsp; Successfully registered <a href='login.php'>login</a> here
+                    Successfully registered! <a href='login.php'>login</a> here
                 </div>
                 <?php //Well, at least it wasn't called as an $error. bleh
             }
@@ -134,10 +133,11 @@ if($user->is_loggedin())
                 <input type="text" class="form-control" name="txt_umail" placeholder="Enter E-Mail ID" value="<?php if(isset($error)){echo $umail;}?>" />
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" name="txt_upass" placeholder="Enter Password" />
+                <input type="password" class="form-control" pattern="(?=.*[!@#$%^&*\(\)])(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" name="txt_upass" placeholder="Enter Password" required/>
+            <br>Password must contain at least six characters, contain at least one uppercase and one lowercase letter, one number, and a special character.
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" name="txt_upassDup" placeholder="Repeat Password" />
+                <input type="password" class="form-control" pattern="(?=.*[!@#$%^&*\(\)])(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" name="txt_upassDup" placeholder="Repeat Password" />
             </div>
             <div class="form-group">
                 <input type="text" class="form-control" name="txt_fname" placeholder="First Name" />
