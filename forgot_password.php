@@ -1,4 +1,5 @@
-<!--
+<?php
+/*<!--
 <--------------------------------------------\
 < Author: Tyler Stoney                       \
 < Date of Creation: October 25, 2017         \
@@ -8,12 +9,12 @@
 <          is sent to the email they specify \
 <          <FRONTEND/BACKEND>                \
 <--------------------------------------------\
--->
+-->*/
 
-<?php
+
 require_once 'dbconfig.php';
 $user_id = $_SESSION['user_session'];
-$stmt = $DB_con->prepare("SELECT * FROM users WHERE user_id=:user_id");
+$stmt = $DB_con->prepare("SELECT * FROM `User` WHERE idUser=:user_id");
 $stmt->execute(array(":user_id"=>$user_id));
 $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -38,7 +39,7 @@ if(isset($_POST['btn-email']))
     //grab email from the user's stat
     $umail = $_POST['umail'];
     try { //Attempt to pull the user associated with that email
-        $stmt = $DB_con->prepare("SELECT * FROM `users` WHERE `user_email`=:umail");
+        $stmt = $DB_con->prepare("SELECT * FROM `User` WHERE `email`=:umail");
         $stmt->execute(array(":umail" => $umail));
         $uRow = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -47,9 +48,9 @@ if(isset($_POST['btn-email']))
             $new_pass = password_hash($randomString, PASSWORD_DEFAULT);
 
             //store the password
-            $stmt = $DB_con->prepare("UPDATE users
-                                    SET user_pass = :upass
-                                    WHERE user_email=:umail");
+            $stmt = $DB_con->prepare("UPDATE `User`
+                                    SET password = :upass
+                                    WHERE email=:umail");
             $stmt->bindparam(":upass", $new_pass);
             $stmt->bindparam(":umail", $umail);
             $stmt->execute();

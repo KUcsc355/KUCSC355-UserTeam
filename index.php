@@ -14,9 +14,10 @@
 //  their session variable
 include_once 'dbconfig.php';
 $user_id = $_SESSION['user_session'];
-$stmt = $DB_con->prepare("SELECT * FROM users WHERE user_id=:user_id");
+$stmt = $DB_con->prepare("SELECT * FROM `User` WHERE idUser=:user_id");
 $stmt->execute(array(":user_id"=>$user_id));
 $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
+
 
 ?>
 
@@ -33,10 +34,10 @@ $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
     <li><a class="current" style="position:relative;top:15px;" href="index.php" title="AITP test - Home"><img src="/files/home.png" alt="AITP test - Home" style="width:30px;height:30px;top:15px;"> </a></li>
     <li><a href="/sign_up.php"><h3>Sign Up</h3></a></li>
     <li><a href="/login.php"><h3>Log In</h3></a></li>
-    <li><a href="/register_event.php"><h3>Register for Event</h3></a></li>
-    <li><a href="/View_Event_Archives.php"><h3>View Events</h3></a></li>
+    <li><a href="/index.php"><h3>Register for Event</h3></a></li>
+    <li><a href="/index.php"><h3>View Events</h3></a></li>
     <?php
-    if($userRow['officer']==3) {
+    if($userRow['priveledge']==3) {
         echo("<li><a href=\"/create_event.php\"><h3>Add Event</h3></a></li>");
         echo "<li><a href='/search_members.php'><h3>Edit Users' Status</h3></a></li>";
     }
