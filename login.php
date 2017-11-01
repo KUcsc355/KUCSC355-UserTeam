@@ -14,7 +14,7 @@ require_once 'dbconfig.php';
 
 $blocked = False;//Not IP banned... yet
 
-$result = $DB_con->prepare("DELETE FROM `locked` WHERE `timestamp` < (now()- interval 10 minute)");
+$result = $DB_con->prepare("DELETE FROM `locked` WHERE `timestamp` < (now()- interval 5 minute)");
 $result->execute();
 
 $ip = $_SERVER["REMOTE_ADDR"];
@@ -97,7 +97,7 @@ if(isset($_POST['btn-login']))
     <li><a href="/register_event.php"><h3>Register for Event</h3></a></li>
     <li><a href="/View_Event_Archives.php"><h3>View Events</h3></a></li>
     <?php
-    if($userRow['officer']==3) {
+    if($userRow['priveledge']==3) {
         echo("<li><a href=\"/create_event.php\"><h3>Add Event</h3></a></li>");
         echo "<li><a href='/search_members.php'><h3>Edit Users' Status</h3></a></li>";
     }

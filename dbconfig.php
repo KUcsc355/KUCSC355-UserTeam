@@ -11,10 +11,10 @@ session_start();
 //  server once that is ready to be worked on.
 //  Obviously not giving out my current credentials
 //  for the whole Internet to see.
-$DB_host = "host";
-$DB_user = "user";
-$DB_pass = "password123";
-$DB_name = "database";
+$DB_host = 'lvaitpsitedb.c8yagni7c74b.us-east-2.rds.amazonaws.com';
+$DB_user = 'awsuser';
+$DB_pass = 'Kutztown';
+$DB_name = 'lvaitpdb';
 
 try
 {

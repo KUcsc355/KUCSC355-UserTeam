@@ -9,7 +9,7 @@
 <?php
 require_once 'dbconfig.php';
 $user_id = $_SESSION['user_session'];
-$stmt = $DB_con->prepare("SELECT * FROM users WHERE user_id=:user_id");
+$stmt = $DB_con->prepare("SELECT * FROM `User` WHERE idUser=:user_id");
 $stmt->execute(array(":user_id"=>$user_id));
 $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -18,7 +18,7 @@ if(!$user->is_loggedin())
     $user->redirect('index.php');
 }
 
-$uid = $userRow['user_id']; //Save this for use in Pfromm-proofing my code
+$uid = $userRow['idUser']; //Save this for use in Pfromm-proofing my code
 
 //Upon pushing the button...
 if(isset($_POST['btn-pass']))
@@ -38,7 +38,7 @@ if(isset($_POST['btn-pass']))
     else {//If everything is good, then go ahead with the rest
         try {
             //Grab the user's info
-            $stmt = $DB_con->prepare("SELECT * FROM users WHERE user_id=:uid");
+            $stmt = $DB_con->prepare("SELECT * FROM `User` WHERE idUser=:uid");
             $stmt->execute(array(':uid' => $uid));
             $userRow = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -46,7 +46,7 @@ if(isset($_POST['btn-pass']))
             //  Don't want any ne'er-do-wells tryin' to change other people's
             //  passwords all willy-nilly, now, do we?
             if ($stmt->rowCount() > 0) {
-                if (password_verify($old_pass, $userRow['user_pass'])) {
+                if (password_verify($old_pass, $userRow['pass'])) {
                     if($user->change_password($uid, $new_pass)){
 
                         //I REALLY hate myself for abusing the $error message system
@@ -82,7 +82,7 @@ if(isset($_POST['btn-pass']))
     <li><a href="/register_event.php"><h3>Register for Event</h3></a></li>
     <li><a href="/View_Event_Archives.php"><h3>View Events</h3></a></li>
     <?php
-    if($userRow['officer']==3) {
+    if($userRow['priveledge']==3) {
         echo("<li><a href=\"/create_event.php\"><h3>Add Event</h3></a></li>");
         echo "<li><a href='/search_members.php'><h3>Edit Users' Status</h3></a></li>";
     }
