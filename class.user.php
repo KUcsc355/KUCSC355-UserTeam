@@ -22,8 +22,8 @@ class USER
         {
             $new_password = password_hash($upass, PASSWORD_DEFAULT);
 
-            $stmt = $this->db->prepare("INSERT INTO users(user_name,user_email,user_pass,fName,lName,officer) 
-                                                       VALUES(:uname, :umail, :upass, :fName, :lName, FALSE)");
+            $stmt = $this->db->prepare("INSERT INTO `User`(uName,email,password,fName,lName,priveledge) 
+                                                       VALUES(:uname, :umail, :upass, :fName, :lName, 0)");
 
             $stmt->bindparam(":uname", $uname);
             $stmt->bindparam(":umail", $umail);
@@ -46,14 +46,14 @@ class USER
     {
         try
         {
-            $stmt = $this->db->prepare("SELECT * FROM users WHERE user_name=:uname OR user_email=:uname LIMIT 1");
+            $stmt = $this->db->prepare("SELECT * FROM `User` WHERE uName=:uname OR email=:uname LIMIT 1");
             $stmt->execute(array(':uname'=>$uname));
             $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
             if($stmt->rowCount() > 0)
             {
-                if(password_verify($upass, $userRow['user_pass']))
+                if(password_verify($upass, $userRow['password']))
                 {
-                    $_SESSION['user_session'] = $userRow['user_id'];
+                    $_SESSION['user_session'] = $userRow['idUser'];
                     return true;
                 }
                 else
@@ -83,9 +83,9 @@ class USER
     {
         $new_pass = password_hash($new_pass, PASSWORD_DEFAULT);
 
-        $stmt = $this->db->prepare("UPDATE users
-                                    SET user_pass = :upass
-                                    WHERE user_id=:uid");
+        $stmt = $this->db->prepare("UPDATE `User`
+                                    SET password = :upass
+                                    WHERE idUser=:uid");
         $stmt->bindparam(":upass", $new_pass);
         $stmt->bindparam(":uid", $user_id);
         $stmt->execute();

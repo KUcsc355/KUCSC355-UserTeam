@@ -1,4 +1,5 @@
-<!--
+<?php
+/*<!--
 <--------------------------------------------\
 < Author: Tyler Stoney                       \
 < Date of Creation: October 25, 2017         \
@@ -6,12 +7,12 @@
 <          with the site.                    \
 <          <FRONTEND/BACKEND>                \
 <--------------------------------------------\
--->
-<?php
+-->*/
+
 
 require_once 'dbconfig.php';
 $user_id = $_SESSION['user_session'];
-$stmt = $DB_con->prepare("SELECT * FROM users WHERE user_id=:user_id");
+$stmt = $DB_con->prepare("SELECT * FROM `User` WHERE idUser=:user_id");
 $stmt->execute(array(":user_id"=>$user_id));
 $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -51,14 +52,14 @@ if(isset($_POST['btn-signup']))
     {
         try
         {
-            $stmt = $DB_con->prepare("SELECT user_name,user_email FROM users WHERE user_name=:uname OR user_email=:umail");
+            $stmt = $DB_con->prepare("SELECT uName,email FROM `User` WHERE uName=:uname OR email=:umail");
             $stmt->execute(array(':uname'=>$uname, ':umail'=>$umail));
             $row=$stmt->fetch(PDO::FETCH_ASSOC);
 
-            if($row['user_name']==$uname) {
+            if($row['uName']==$uname) {
                 $error[] = "Username already taken!";
             }
-            else if($row['user_email']==$umail) {
+            else if($row['email']==$umail) {
                 $error[] = "Email address already in use";
             }
             else
@@ -93,7 +94,7 @@ if(isset($_POST['btn-signup']))
     <li><a href="/register_event.php"><h3>Register for Event</h3></a></li>
     <li><a href="/View_Event_Archives.php"><h3>View Events</h3></a></li>
     <?php
-    if($userRow['officer']==3) {
+    if($userRow['priveledge']==3) {
         echo("<li><a href=\"/create_event.php\"><h3>Add Event</h3></a></li>");
         echo "<li><a href='/search_members.php'><h3>Edit Users' Status</h3></a></li>";
     }

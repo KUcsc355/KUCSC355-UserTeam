@@ -14,12 +14,12 @@
 
 include_once 'dbconfig.php';
 $user_id = $_SESSION['user_session'];
-$stmt = $DB_con->prepare("SELECT * FROM users WHERE user_id=:user_id");
+$stmt = $DB_con->prepare("SELECT * FROM User WHERE idUser=:user_id");
 $stmt->execute(array(":user_id"=>$user_id));
 $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
-$my_id = $userRow['user_id'];
+$my_id = $userRow['idUser'];
 
-if(!$user->is_loggedin()||$userRow['officer']!=3)
+if(!$user->is_loggedin()||$userRow['priveledge']!=3)
 {
     $user->redirect('index.php');
 }
@@ -70,9 +70,9 @@ The navigation bar.
     <li><a style="position:relative;top:15px;" href="index.php" title="AITP test - Home"><img src="/files/home.png" alt="AITP test - Home" style="width:30px;height:30px;top:15px;"> </a></li>
     <li><a href="/sign_up.php"><h3>Sign Up</h3></a></li>
     <li><a href="/login.php"><h3>Log In</h3></a></li>
-    <li><a href="/register_event.php"><h3>Register for Event</h3></a></li>
-    <li><a href="/View_Event_Archives.php"><h3>View Events</h3></a></li>
-    <li><a href="/create_event.php"><h3>Add Event</h3></a></li>
+    <li><a href="/index.php"><h3>Register for Event</h3></a></li>
+    <li><a href="/index.php"><h3>View Events</h3></a></li>
+    <li><a href="/index.php"><h3>Add Event</h3></a></li>
     <li><a class="current" href='/search_members.php'><h3>Edit Users' Status</h3></a></li>
 </ul>
 
@@ -87,7 +87,7 @@ The navigation bar.
             <h1>Search User</h1><hr /><br>
             <?php if(isset($error)){echo $error;} ?>
             <div class="form-group">
-                <input type="text" class="form-control" name="cred" placeholder="Email address or last name" required />
+                <input type="text" class="form-control" name="cred" placeholder="Email address, first or last name" required />
             </div>
             <div class="clearfix"></div><hr />
             <div class="form-group">
@@ -114,14 +114,14 @@ if(isset($_POST['btn-email'])||isset($_POST['btn-change']))
             $t_value = $t_value%10;
 
             //Update the respective users, provided they are not the stats of the admin currently performing the action.
-            $stmt = $DB_con->prepare("UPDATE users SET officer = :val WHERE user_id=:uid AND user_id<>:my_id");
+            $stmt = $DB_con->prepare("UPDATE `User` SET priveledge = :val WHERE idUser=:uid AND idUser<>:my_id");
             $stmt->bindParam(":val", $t_value);
             $stmt->bindParam(":uid", $t_id);
             $stmt->bindParam(":my_id", $my_id);
             $stmt->execute();
         }
         foreach ($_POST['deletion'] as $t_delete){
-            $stmt = $DB_con->prepare("DELETE FROM users WHERE user_id=:uid AND user_id<>:my_id");
+            $stmt = $DB_con->prepare("DELETE FROM `User` WHERE idUser=:uid AND idUser<>:my_id");
             $stmt->bindParam(":uid", $t_delete);
             $stmt->bindParam(":my_id", $my_id);
             $stmt->execute();
@@ -129,17 +129,17 @@ if(isset($_POST['btn-email'])||isset($_POST['btn-change']))
         echo "<p>User(s) changed successfully!</p>";
     }
     echo "<form method='post'><table><tr><td>Name</td><td>Email Address</td><td>Account Level</td><td>Delete User?</td></tr>";
-    $page = $DB_con->prepare("SELECT user_id, fName, lName, user_email, officer FROM users WHERE lName=:uname OR user_email=:uname");
+    $page = $DB_con->prepare("SELECT idUser, fName, lName, email, priveledge FROM User WHERE fName=:uname OR lName=:uname OR email=:uname");
     $page->bindParam(":uname", $_POST['cred']);
     $page->execute();
 
     //Grab everything that readily identifies a user. Repeat for as long as the result has unique results.
     while ($row = $page->fetch(PDO::FETCH_ASSOC)){
-        $id = $row['user_id'];
+        $id = $row['idUser'];
         $fName = $row['fName'];
         $lName = $row['lName'];
-        $email = $row['user_email'];
-        $officer = $row['officer'];
+        $email = $row['email'];
+        $officer = $row['priveledge'];
         $value = $id*10; //Prep the value for making that 'encoded' value to schlep through the array post
 
         //Here's where some crafty php comes into play; each line adds another value to populate a dropdown box,
